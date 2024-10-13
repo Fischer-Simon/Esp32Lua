@@ -22,4 +22,5 @@ public:
 
 private:
     lua_State* m_state;
+    std::mutex m_stateMutex;
 };

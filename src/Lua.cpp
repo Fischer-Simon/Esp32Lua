@@ -106,6 +106,7 @@ Lua::Lua() : m_state{luaL_newstate()} {
 }
 
 void Lua::run(const char* script, Print* output) {
+    std::unique_lock<std::mutex> stateLock{m_stateMutex};
     globalOutput = output ? output : &Serial;
     if (luaL_dostring(m_state, script) != LUA_OK) {
         globalOutput->println(lua_tostring(m_state, -1));
@@ -115,6 +116,7 @@ void Lua::run(const char* script, Print* output) {
 }
 
 void Lua::load(const char* fileName, Print* output) {
+    std::unique_lock<std::mutex> stateLock{m_stateMutex};
     globalOutput = output ? output : &Serial;
     if (luaL_dofile(m_state, fileName) != LUA_OK) {
         globalOutput->println(lua_tostring(m_state, -1));
@@ -124,6 +126,7 @@ void Lua::load(const char* fileName, Print* output) {
 }
 
 void Lua::call(const char* func, const std::vector<std::string>& argv, Print* output) {
+    std::unique_lock<std::mutex> stateLock{m_stateMutex};
     globalOutput = output ? output : &Serial;
     lua_getglobal(m_state, func);
     for (auto& arg: argv) {
@@ -137,6 +140,7 @@ void Lua::call(const char* func, const std::vector<std::string>& argv, Print* ou
 }
 
 void Lua::addModule(const char* name, int (* loadFunc)(lua_State*)) {
+    std::unique_lock<std::mutex> stateLock{m_stateMutex};
     luaL_requiref(m_state, name, loadFunc, 1);
     lua_pop(m_state, 1);
 }
