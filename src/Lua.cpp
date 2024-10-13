@@ -102,7 +102,6 @@ Lua::Lua() : m_state{luaL_newstate()} {
     addModule("pin", &luaopen_pin);
 
     std::string seedCode = std::string{"math.randomseed("} + std::to_string(esp_random() / 2) + ")";
-    Serial.printf("Running %s\n", seedCode.c_str());
     run(seedCode.c_str());
 }
 
