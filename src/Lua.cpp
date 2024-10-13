@@ -139,6 +139,30 @@ void Lua::call(const char* func, const std::vector<std::string>& argv, Print* ou
     globalOutput = nullptr;
 }
 
+void Lua::call(const char* func, const std::vector<Arg>& argv, Print* output) {
+    std::unique_lock<std::mutex> stateLock{m_stateMutex};
+    globalOutput = output ? output : &Serial;
+    lua_getglobal(m_state, func);
+    for (auto& arg: argv) {
+        switch (arg.getType()) {
+            case Arg::String:
+                lua_pushstring(m_state, arg.getStrVal().c_str());
+                break;
+            case Arg::Integer:
+                lua_pushinteger(m_state, arg.getIntVal());
+                break;
+            case Arg::Float:
+                lua_pushnumber(m_state, arg.getFloatVal());
+                break;
+        }
+    }
+    if (lua_pcall(m_state, argv.size(), 0, 0) != LUA_OK) {
+        globalOutput->printf("error calling '%s': %s\r\n", func, lua_tostring(m_state, -1));
+        lua_pop(m_state, 1);
+    }
+    globalOutput = nullptr;
+}
+
 void Lua::addModule(const char* name, int (* loadFunc)(lua_State*)) {
     std::unique_lock<std::mutex> stateLock{m_stateMutex};
     luaL_requiref(m_state, name, loadFunc, 1);
