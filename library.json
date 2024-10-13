@@ -1,6 +1,6 @@
 {
   "name": "Esp32Lua",
-  "version": "5.4.6",
+  "version": "5.4.7",
   "description": "Simple C++ wrapper for lua",
   "keywords": "lua, esp32",
   "repository":
