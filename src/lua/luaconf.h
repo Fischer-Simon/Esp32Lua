@@ -737,7 +737,7 @@
 ** (It must fit into max(size_t)/32 and max(int)/2.)
 */
 #if LUAI_IS32INT
-#define LUAI_MAXSTACK		10000
+#define LUAI_MAXSTACK		2048
 #else
 #define LUAI_MAXSTACK		15000
 #endif
@@ -756,7 +756,7 @@
 ** of a function in debug information.
 ** CHANGE it if you want a different size.
 */
-#define LUA_IDSIZE	16
+#define LUA_IDSIZE	128
 
 
 /*
